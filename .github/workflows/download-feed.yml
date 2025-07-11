@@ -1,0 +1,37 @@
+name: Download and Commit GTFS .pb
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  download-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      - name: Set up Git identity
+        run: |
+          git config user.name "gtfs-bot"
+          git config user.email "gtfs-bot@users.noreply.github.com"
+
+      - name: Download .pb file
+        run: |
+          mkdir -p data
+          timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
+          curl -o "data/VehiclePositions_$timestamp.pb" "https://otd.delhi.gov.in/api/realtime/VehiclePositions.pb?key=${{ secrets.DELHI_API_KEY }}"
+          echo "filename=VehiclePositions_$timestamp.pb" >> $GITHUB_ENV
+
+      - name: Commit new file
+        run: |
+          git add data/
+          git commit -m "Add GTFS feed ${{ env.filename }}" || echo "No changes to commit"
+          git push
