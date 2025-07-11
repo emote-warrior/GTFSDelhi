@@ -3,7 +3,7 @@ name: Download and Commit GTFS .pb
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/5 * * * *"
 
 permissions:
   contents: write
