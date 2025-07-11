@@ -26,7 +26,7 @@ jobs:
       - name: Download .pb file
         run: |
           mkdir -p data
-          timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
+          timestamp=$(TZ="Asia/Kolkata" date +'%Y-%m-%d_%H-%M-%S')
           curl -o "data/VehiclePositions_$timestamp.pb" "https://otd.delhi.gov.in/api/realtime/VehiclePositions.pb?key=${{ secrets.DELHI_API_KEY }}"
           echo "filename=VehiclePositions_$timestamp.pb" >> $GITHUB_ENV
 
